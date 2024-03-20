@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 # Creating the class that will store my data 
 
 class Model():
+    """
+    Container class to store classification model attributes
+    """
+    
     model_list = []
     model_df = pd.DataFrame(columns=['name','train_accuracy','train_prec','train_recall','train_f1','train_logloss',\
                                      'test_accuracy','test_prec','test_recall','test_f1','test_logloss', "AUC"])
@@ -130,33 +134,133 @@ class Model():
       return f"Model name: {self.name}"
 
 
-# Class for collecting coefficients of models based on economic features
 
-class Importance():
-    df = pd.DataFrame(columns=['Adj Close', 'Close', 'High', 'Low','Open', 'Volume', 'GDP_Filled',\
-                               'Interest_Rates','Mkt-RF','SMB','HML','RMW','CMA','garman_klass_vol','RSI', \
-                               'lowest_bollinger_band', 'lower_bollinger_band', '20_day_SMA', \
-                               'one_up_bollinger_band','upper_bollinger_band', 'ATR', 'MACD', 'dollar_volume(M)',\
-                               'Quarter_1','Quarter_2','Quarter_3','Quarter_4','Month_1','Month_10','Month_11',\
-                               'Month_12','Month_2','Month_3','Month_4','Month_5','Month_6','Month_7','Month_8',\
-                               'Month_9','cycle_year_1','cycle_year_2','cycle_year_3','cycle_year_4',\
-                               'day_of_week_Friday','day_of_week_Monday','day_of_week_Thursday',\
-                               'day_of_week_Tuesday','day_of_week_Wednesday'])
+
+
+# Functions to aid in collection
+
+# Extract Feature Importance from Tree-based Models
+
+def features_from_trees(model_class, number_of_features=5):
+    """
+    Extracts and zips feature importances with their feature names for tree-based models like Random Forest,
+    Extra Trees, and XGBoost
     
-    # Init method
-    def __init__(self, coefs):
-        self.dict = coefs
+    Parameters
+    ------------
+    model_class: variable name of class Model instance | 
+        i.e. rfc = Model("Random Forest Class") ->   <rfc> would be the desired model_class argument
     
-        # Add the metrics to the class dataframe
-        idx = len(Importance.df)
-        Importance.df.loc[idx] = self.dict
+    number_of_features: int| number of features desired as output of print() side-effect, no bearing on return value
     
+    Returns:
+    -----------
+    sorted list: a list of tuples sorted by the "feature_importance" value (feature_name, importance)
+    """
+
+    # Extracting feature importances and adding them to a dataframe to contain them for each model
+
+    features = list(model_class.model.get_params()["ct"].get_feature_names_out())
+    features_list = [i.replace("num_pipe__", "").replace("cat_pipe__","") for i in features]
+
+    imp_feats = model_class.model.get_params()['model'].feature_importances_
+
+    imp_list = list(zip(features_list, imp_feats))
+    imp_dict = dict(imp_list)
+
+    idx = len(Importance.df)
+    Importance(imp_dict)
+    Importance.df.rename(index={idx:model_class.name}, inplace=True)
     
-    def add_coefs(self, coefs):
-        idx = len(Importance.df)
-        Importance.df.loc[idx] = coefs
+
+    print(f"Top {number_of_features} Feature Importances")
+    for i in sorted(imp_list, key=lambda x: x[1], reverse=True)[:number_of_features]:
+        print(i)
+    
+    return sorted(imp_list, key=lambda x: x[1], reverse=True)
         
+
+
+# Extracts the coefficients from Logistic Regression models and pairs them with their features
+
+def coefs_from_lr(model_class, number_of_coefs=5):
     
-    def __str__(self):
-      return "Feature Importance/Coefficient DataFrame"
-        
+    """
+    Extracts and zips feature coefficients with their feature names for parametric models like Logistic Regression
+    
+    Parameters
+    ------------
+    model_class: variable name of class Model instance | 
+        i.e. logreg = Model("Logistic Regression") ->   <logreg> would be the desired model_class argument
+    
+    number_of_features: int| number of features desired as output of print() side-effect, no bearing on return value
+    
+    Returns:
+    -----------
+    sorted list: a list of tuples sorted by the absolute value of the "coefficient" value 
+        (feature_name, coefficient)
+    """
+    
+    features = model_class.model.named_steps["ct"].get_feature_names_out()
+    features_list = [i.replace("num_pipe__", "").replace("cat_pipe__","") for i in features]
+    
+    coef_feats = model_class.model.get_params()['model'].coef_[0]
+    
+    imp_list = list(zip(features_list, coef_feats))
+    imp_dict = dict(imp_list)
+    
+    idx = len(Importance.df)
+    Importance(imp_dict)
+    Importance.df.rename(index={idx:model_class.name}, inplace=True)
+
+    print(f"Top {number_of_coefs} Feature Coefficients by Absolute Value")
+    for i in sorted(imp_list, key=lambda x: np.abs(x[1]), reverse=True)[:number_of_coefs]:
+        print(i)
+    
+    return sorted(imp_list, key=lambda x: np.abs(x[1]), reverse=True)
+
+
+def get_polarized_magnitudes(num_of_features, model_name):
+    """
+    Function to display "num_of_features" number of largest and smallest coefficients or feature importances
+    
+    Parameters:
+    -------------
+    num_of_features: int | number of large/small coefficients/features returned
+    model_name: str | string name of model stored in Model.name for the custom model class
+    
+    Returns:
+    -------------
+    combined: concatenated df with one row as a partition between the largest and smallest values
+    """
+    # Sort and select top features
+    global Importance
+    top_features_high = Importance.df.T.sort_values(by=model_name, ascending=False)[:num_of_features]
+    top_features_low = Importance.df.T.sort_values(by=model_name, ascending=True)[:num_of_features]
+    
+    # Create an empty DataFrame with NaN values
+    empty_row = pd.DataFrame([[99999] * len(top_features_high.columns)], columns=top_features_high.columns)
+    empty_row.rename(index={0:"PARTITION Large Above|Small Below"}, inplace=True)
+    # Concatenate DataFrames with an empty row in between
+    combined = pd.concat([top_features_high, empty_row, top_features_low], axis=0)
+    
+    return combined
+
+
+def get_largest_magnitudes(num_of_features, extracted_features_list):
+    """
+    Function to display "num_of_features" number of largest magnitude coefficients or feature importances
+    
+    Parameters:
+    -------------
+    num_of_features: int | number of large/small coefficients/features returned
+    model_name: str | string name of model stored in Model.name for the custom model class
+    
+    Returns:
+    -------------
+    combined: concatenated df with one row as a partition between the largest and smallest values
+    """
+    # Create DataFrame from list of tuples
+    data = pd.DataFrame(extracted_features_list[:num_of_features])
+    data.rename(columns={0:"Feature Name", 1:"Coef/Importance"}, inplace=True)
+    return data
