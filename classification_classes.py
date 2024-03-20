@@ -234,7 +234,7 @@ def get_polarized_magnitudes(num_of_features, model_name):
     combined: concatenated df with one row as a partition between the largest and smallest values
     """
     # Sort and select top features
-    global Importance
+
     top_features_high = Importance.df.T.sort_values(by=model_name, ascending=False)[:num_of_features]
     top_features_low = Importance.df.T.sort_values(by=model_name, ascending=True)[:num_of_features]
     
