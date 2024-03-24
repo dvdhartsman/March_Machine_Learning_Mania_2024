@@ -209,8 +209,9 @@ def coefs_from_lr(model_class, number_of_coefs=5):
     imp_list = list(zip(features_list, coef_feats))
     imp_dict = dict(imp_list)
     
-    idx = len(Importance.df)
+    
     Importance(imp_dict)
+    idx = len(Importance.df) 
     Importance.df.rename(index={idx:model_class.name}, inplace=True)
 
     print(f"Top {number_of_coefs} Feature Coefficients by Absolute Value")
@@ -264,3 +265,39 @@ def get_largest_magnitudes(num_of_features, extracted_features_list):
     data = pd.DataFrame(extracted_features_list[:num_of_features])
     data.rename(columns={0:"Feature Name", 1:"Coef/Importance"}, inplace=True)
     return data
+
+
+
+def compare_curves(list_of_models):
+    """
+    Function to compare the ROC curves of selected model objects
+    
+    Parameters
+    -----------------
+    list_of_models: list| this list contains instances of the custom Model class
+    
+    
+    Returns
+    -----------------
+    figure: matplotlib.pyplot figure| plot of ROC curves for len(list_of_models) models
+        useful for visual comparison of model performance.  
+    """
+    sns.set_style("dark")
+    # Color Palette
+    colors = sns.color_palette("Paired", n_colors=8)
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(7,7))
+    for i in range(len(list_of_models)):
+        # get the predict_proba values
+        y_hat_hd = list_of_models[i].y_pred_proba[:, 1]
+
+        # Get the FPR and TPR data
+        fpr, tpr, thresholds = roc_curve(list_of_models[i].y_test, y_hat_hd)
+        # Plot the actual graph
+        ax.plot(fpr, tpr, color=colors[i], label=f'{list_of_models[i].name} | AUC: {list_of_models[i].auc:.2f})')
+
+    ax.set_title(f"Comparison of ROC Curves")
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.legend(loc='lower right')
+    plt.grid(False);
