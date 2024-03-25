@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 class Model():
     """
-    Container class to store classification model attributes
+    Container class to store classification model attributes. All training and test scores are stored upon instantiation
     """
     
     model_list = []
@@ -19,18 +19,26 @@ class Model():
                                      'test_accuracy','test_prec','test_recall','test_f1','test_logloss', "AUC"])
     
     def __init__(self, name, model, X_train, X_test, y_train, y_test, threshold=.5):
+        """
+        Instantiation of Model Class - collects all train/test metrics
+        """
+        
+        # Collection of parameters required for instantiation
         self.name = name
         self.model = model
         self.X_train = X_train
         self.X_test = X_test
         self.y_train = y_train
         self.y_test = y_test
+        
+        # Optional argument to assess whether or not to manipulate the classification threshold
         self.threshold = threshold
         
         # Collection of training attributes
         # f1, recall, precision add "_macro" for multi-class
         self.train_results = cross_validate(self.model, self.X_train, self.y_train, scoring=[
             'precision', 'accuracy', 'recall', 'f1', 'neg_log_loss'], n_jobs=4, verbose=1)
+        
         # Train metrics
         self.train_acc = np.mean(self.train_results['test_accuracy'])
         self.train_prec = np.mean(self.train_results['test_precision']) # add "_macro" for multi-class
@@ -48,13 +56,19 @@ class Model():
         else:
             self.y_pred = (self.model.predict_proba(self.X_test)[:, 1] >= self.threshold).astype(int)
         
+        # Accuracy
         self.test_score = model.score(self.X_test, self.y_test)
-        # average = "macro" for multi-class
+        
+        # Recall - average = "macro" for multi-class
         self.test_recall = recall_score(self.y_test, self.y_pred, average='binary', zero_division=0)
-        # average = "macro" for multi-class
+                
+        # Precision - average = "macro" for multi-class
         self.test_prec = precision_score(self.y_test, self.y_pred, average='binary', zero_division=0)
+        
+        # Log-loss
         self.test_log_loss = log_loss(self.y_test, self.y_pred_proba)
-        # average = "macro" for multi-class
+        
+        # F1-score - average = "macro" for multi-class
         self.test_f1 = f1_score(self.y_test, self.y_pred, average='binary', zero_division=0)
         
         # AUC metrics -> Remove when we get to multi-class
@@ -76,8 +90,19 @@ class Model():
         
         
         
-    # Roc Curve plot method -> needs to be removed for multi-class
+    # Roc Curve in isolation plot method 
     def roc_curve(self):
+        """
+        Inspect the ROC curve of an individual model in isolation with a label of the model's AUC 
+        
+        Parameters
+        --------------
+        self: model object
+        
+        Returns:
+        --------------
+        Figure: matplotlib figure with a plotted ROC curve and AUC score in the legend
+        """
         # Create the plot
         sns.set_style("dark")
         fig, ax = plt.subplots(figsize=(6,6))
@@ -100,7 +125,20 @@ class Model():
         plt.grid(False);
         
         
+    # All ROC Curves on same plot
     def compare_roc_curve(self):
+        """
+        Compares the ROC curves of all models in the class list of models. All curves are plotted on the same ax object.
+        
+        Parameters
+        --------------
+        self: model object | This is a class method, and it is able to be called on any instance of a Model object.
+        
+        Returns
+        --------------
+        Figure: matplotlib figure with all curves plotted on the same ax. Model name and AUC are included in the legend
+        """
+        
         sns.set_style("dark")
         # Color Palette
         colors = sns.color_palette("Paired", n_colors=30)
@@ -122,7 +160,21 @@ class Model():
         plt.grid(False);
     
     
+    # Return the confusion matrix
     def confusion_matrix(self):
+        """
+        Display of the confusion matrix for an individual model object
+        
+        Parameters
+        -------------
+        self: instance of a model object | the object has all other required information stored as attributes
+        
+        Returns
+        -------------
+        ConfusionMatrixDisplay: from sklearn.metrics, this is a display of all true/predicted values in a n x n matrix for 
+            n number of classes
+        """
+        
         sns.set_style('white')
         # Confusion Matrix Plot
         fig, ax = plt.subplots(figsize=(6,6))
@@ -268,7 +320,7 @@ def get_largest_magnitudes(num_of_features, extracted_features_list):
 
 
 
-def compare_curves(list_of_models):
+def compare_curves(self, list_of_models):
     """
     Function to compare the ROC curves of selected model objects
     
