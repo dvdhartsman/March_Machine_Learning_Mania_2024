@@ -15,6 +15,8 @@ By: David Hartsman
     - Creating Final Brackets Using the Pre-Trained Model from Notebook #2
 
 
+<hr style= "border: 4px solid blue">
+
 ### Overview
 
 The overarching goal of this project was to develop a model capable of accurately predicting NCAA Basketball Tournament games. I took the specific avenue of developing a classification model to determine which team would win in a head-to-head match-up. I began with a broad approach. I used multiple different model types and also incorporated data from **both Men's and Women's** basketball. Later on in the modeling process, I made the decision to focus entirely on Men's basketball. The processes I used could easily be applied to the Women's data as well. 
