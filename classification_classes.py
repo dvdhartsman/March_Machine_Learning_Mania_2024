@@ -320,7 +320,7 @@ def get_largest_magnitudes(num_of_features, extracted_features_list):
 
 
 
-def compare_curves(self, list_of_models):
+def compare_curves(list_of_models):
     """
     Function to compare the ROC curves of selected model objects
     
