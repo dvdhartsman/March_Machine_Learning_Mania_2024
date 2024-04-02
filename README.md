@@ -44,8 +44,10 @@ I modified the way that my modeling data was constructed midway through the proc
 
 After much evaluation, I found that Logistic Regression produced model predictions that were generally the best. There was one occasion in the process where a Random Forest Classifier produced exceptional results, however that was an instance where the RFC test score was actually better than the training score. I determined that this outcome was likely influenced by the specific data split, and I therefore opted to continue using Logistic Regression, as its results seemed more reliable.
 
-![Comparison of the Best Model Performances](./images/train_test_bars.png)
 
 I do believe that there may have been a bit more performance that I could have squeezed from the data. Continuing the process of feature engineering and selection would have been painstaking, but potentially productive. I also would have liked to have more detailed information about *base-offense* or *base-defense* as well as inidividual player data. Some of these specific style combinations may have the potential to inform better predictions. 
+
+![Comparison of the Best Model Performances](./images/train_test_bars.png)
+
 
 Ultimately, the difficulty that I experienced in improving model performance is reflective of the exact reasons that March Madness captures the national spotlight year after year. It is a contest that features moments of high drama and improbable outcomes. Those moments and the pain and joy that they bring are what we all tune in to see. It would appear that those moments are also part of the irreduceable error found in this particular modeling experiment. Thank you for reading, and please explore my notebooks for further detail if you would like to!  
