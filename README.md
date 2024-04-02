@@ -1,3 +1,6 @@
+![Cutting the Nets and Winning Your Bracket Pool](./images/net_cutting.jpg)
+
+
 # March_Machine_Learning_Mania_2024
 **Predicting 2024 NCAA Basketball Tournament Results**
 
