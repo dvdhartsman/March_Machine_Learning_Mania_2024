@@ -3,23 +3,30 @@
 
 From the *Kaggle* Competition: ["March Machine Learning Mania 2024"](https://www.kaggle.com/competitions/march-machine-learning-mania-2024/overview)
 
-David Hartsman
+By: David Hartsman
 
-[First Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/1_Data_Understanding_and_Aggregation.ipynb) Data Understanding, Processing, and Aggregation
+[First Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/1_Data_Understanding_and_Aggregation.ipynb) 
+    
+    - Data Understanding, Processing, and Aggregation
 
-[Second Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/2_Model_Development.ipynb) Feature Selection, Feature Engineering, Model Iterations, and Model Analysis
+[Second Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/2_Model_Development.ipynb) 
+    
+    - Feature Selection, Feature Engineering, Model Iterations, and Model Analysis
 
-[Third Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/3_Bracket_Generation.ipynb) Creating Final Brackets Using the Pre-Trained Model from Notebook #2
+[Third Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/3_Bracket_Generation.ipynb) 
+
+    - Creating Final Brackets Using the Pre-Trained Model from Notebook #2
 
 
-### Overview:
+### Overview
 
 The overarching goal of this project was to develop a model capable of accurately predicting NCAA Basketball Tournament games. I took the specific avenue of developing a classification model to determine which team would win in a head-to-head match-up. I began with a broad approach. I used multiple different model types and also incorporated data from **both Men's and Women's** basketball. Later on in the modeling process, I made the decision to focus entirely on Men's basketball. The processes I used could easily be applied to the Women's data as well. 
 
 ![Distribution of Scoring Margins for Men's and Women's NCAA Tournament Games](./images/margin_dists.png)
 
 
-### Data:
+### Data
+
 There were 32 different CSV files that were used to curate and process the data. The game-specific data came in two different forms: **compact** and **detailed**. I opted to use the detailed data to aggregate seasons statistics. The detailed data contained more granular counting statists, such as *3 pointers attempted* and *3 pointers made* etc., as opposed to more general statistics like *winning score* and *losing score* found in the compact data. The detailed data had season information going as far back as to the season ending in the year 2003. 
 
 I grouped the detailed data by *TeamID* and *Season* and aggregated a wide range of statistics for each team. Those details can be primarily found in the [first notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/1_Data_Understanding_and_Aggregation.ipynb), however I did continue to create and engineer additional features throughout the modeling process in the [second notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/2_Model_Development.ipynb). The majority of these features were numerical, however there were several categorical features included as well, such as *conference* or *coach*. 
