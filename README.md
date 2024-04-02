@@ -1,4 +1,4 @@
-<img src="./images/net_cutting.jpg" alt="Cutting the Nets and Winning Your Bracket Pool" width="300" height="200">
+<img src="./images/net_cutting.jpg" alt="Cutting the Nets and Winning Your Bracket Pool" width="600" height="400">
 
 
 # March_Machine_Learning_Mania_2024
