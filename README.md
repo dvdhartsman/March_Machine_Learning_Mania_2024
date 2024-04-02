@@ -1,6 +1,8 @@
 # March_Machine_Learning_Mania_2024
 Predicting 2024 NCAA Basketball Tournament Results
-From the Kaggle Competition: "March Machine Learning Mania 2024"
+
+From the Kaggle Competition: ["March Machine Learning Mania 2024"](https://www.kaggle.com/competitions/march-machine-learning-mania-2024/overview)
+
 David Hartsman
 
 [First Notebook](https://github.com/dvdhartsman/March_Machine_Learning_Mania_2024/blob/main/1_Data_Understanding_and_Aggregation.ipynb) Data Understanding, Processing, and Aggregation
